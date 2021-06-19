@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+    frontend:
+        image: node:latest
+        container_name: frontend
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./app:/var/www
+        working_dir: /var/www
+        command: /bin/bash -c "npm run serve"
