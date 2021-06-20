@@ -5,8 +5,50 @@ services:
         image: node:latest
         container_name: frontend
         ports:
-            - "3000:3000"
+            - 3000:3000
         volumes:
             - ./app:/var/www
         working_dir: /var/www
-        command: /bin/bash -c "npm run serve"
+#        command: /bin/bash -c "npm run serve"
+        command: /bin/bash -c "tail -f /dev/null"
+
+    mysql:
+        image: mysql/mysql-server:latest
+        restart: on-failure
+        volumes:
+            - dbdata:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpass #${DATABASE_ROOT_PASSWORD}
+            MYSQL_DATABASE: smartmedia #${DATABASE_NAME}
+            MYSQL_USER: smartmedia #${DATABASE_USER}
+            MYSQL_PASSWORD: smartmediapass #${DATABASE_PASSWORD}
+        ports:
+            - 3306:3306
+
+    php:
+        build: ./docker/php/
+        restart: on-failure
+        depends_on:
+            - mysql
+        environment:
+            DATABASE_DSN: mysql:host=mysql;port=3306;dbname=smartmedia # mysql:host=mysql;port=3306;dbname=${DATABASE_NAME}
+            DATABASE_USER: smartmedia #${DATABASE_USER}
+            DATABASE_PASSWORD: smartmediapass #${DATABASE_PASSWORD}
+        volumes:
+            - ./api:/var/www
+        links:
+            - mysql
+        working_dir: /var/www
+
+    nginx:
+        build: ./docker/nginx/
+        restart: on-failure
+        depends_on:
+            - php
+        volumes:
+            - ./api:/var/www
+        ports:
+            - 8080:80
+
+volumes:
+    dbdata:

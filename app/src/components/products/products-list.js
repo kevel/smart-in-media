@@ -7,7 +7,6 @@ class ProductsList extends HTMLElement {
 
   connectedCallback() {
     this.render(this);
-
   }
 
   render(el) {
