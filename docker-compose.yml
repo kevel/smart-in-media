@@ -4,13 +4,17 @@ services:
     frontend:
         image: node:latest
         container_name: frontend
+        depends_on:
+            - nginx
+        links:
+            - nginx
         ports:
             - 3000:3000
         volumes:
             - ./app:/var/www
         working_dir: /var/www
-#        command: /bin/bash -c "npm run serve"
-        command: /bin/bash -c "tail -f /dev/null"
+        command: /bin/bash -c "npm install && npm run serve"
+#        command: /bin/bash -c "tail -f /dev/null"
 
     mysql:
         image: mysql/mysql-server:latest
@@ -38,6 +42,13 @@ services:
             - ./api:/var/www
         links:
             - mysql
+        working_dir: /var/www
+
+    composer:
+        image: composer/composer
+        command: install
+        volumes:
+            - ./api:/var/www
         working_dir: /var/www
 
     nginx:

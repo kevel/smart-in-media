@@ -1,3 +1,5 @@
+import Product from './product';
+
 class ProductsList extends HTMLElement {
   constructor() {
     super();
@@ -10,8 +12,13 @@ class ProductsList extends HTMLElement {
   }
 
   render(el) {
-    const st = JSON.stringify(this._products);
-    this.innerHTML = `<h1>${st}</h1>`;
+    this.innerHTML = '';
+    this.products.forEach((product) => {
+      const productEl = document.createElement('vm-product');
+      productEl.setAttribute('class', 'col-sm-4 col-md-3 mb-3');
+      productEl.product = product;
+      this.appendChild(productEl);
+    });
   }
 
   set products(value) {

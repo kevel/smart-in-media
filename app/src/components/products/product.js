@@ -1,8 +1,10 @@
+import template from './product.html';
+
 class Product extends HTMLElement {
   constructor() {
     super();
 
-    this._products = [];
+    this._product = null;
   }
 
   connectedCallback() {
@@ -11,21 +13,27 @@ class Product extends HTMLElement {
   }
 
   render(el) {
-    const st = JSON.stringify(this._products);
-    this.innerHTML = `<h1>${st}</h1>`;
+    this.innerHTML = '';
+    if (!this.product) {
+      return;
+    }
+
+    this.innerHTML = template
+      .replace('{{product.title}}', this.product.title)
+      .replace('{{product.price}}', this.product.price);
   }
 
-  set products(value) {
-    this._products = value;
+  set product(value) {
+    this._product = value;
 
     this.render(this);
   }
 
-  get products() {
-    return this._products;
+  get product() {
+    return this._product;
   }
 }
 
 window.customElements.define('vm-product', Product);
 
-export default Products;
+export default Product;
